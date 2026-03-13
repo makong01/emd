@@ -1,33 +1,13 @@
-// functions/[[path]].js
-import redirectsJson from "../../data/redirects.json";
+export function onRequestGet(context) {
+  const slug = new URL(context.request.url).pathname.replace(/^\/go\//, "");
 
-const redirects = JSON.parse(redirectsJson);
+  const redirects = {
+    "brand-a": "https://affiliate.example.com/brand-a"
+  };
 
-export async function onRequestGet(context) {
-  const url = new URL(context.request.url);
-  const slug = url.pathname.replace(/^\/go\//, "").replace(/\/+$/, "");
-
-  if (!slug) {
-    return new Response("Missing redirect key", { status: 400 });
+  if (!redirects[slug]) {
+    return new Response("Not found", { status: 404 });
   }
 
-  const target = redirects[slug];
-
-  if (!target) {
-    return new Response("Redirect target not found", { status: 404 });
-  }
-
-  const targetUrl = new URL(target);
-  
-  /*
-  const allowedHosts = [
-    "affiliate.example.com",
-    "partner.example.net"
-  ];
-
-  if (!allowedHosts.includes(targetUrl.hostname)) {
-    return new Response("Forbidden redirect target", { status: 403 });
-  }*/
-
-  return Response.redirect(targetUrl.toString(), 302);
+  return Response.redirect(redirects[slug], 302);
 }
