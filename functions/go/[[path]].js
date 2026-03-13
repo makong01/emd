@@ -1,6 +1,6 @@
-import redirectsJson from "../../data/redirects.json";
+import redirectsText from "../../data/redirects.json";
 
-const redirects = JSON.parse(redirectsJson);
+const redirects = JSON.parse(redirectsText);
 
 export function onRequest(context) {
   const method = context.request.method;
@@ -22,10 +22,7 @@ export function onRequest(context) {
   const target = redirects[slug];
 
   if (!target) {
-    return new Response(`Redirect target not found for slug: ${slug}`, {
-      status: 404,
-      headers: { "content-type": "text/plain; charset=UTF-8" }
-    });
+    return new Response("Redirect target not found", { status: 404 });
   }
 
   return Response.redirect(target, 302);
