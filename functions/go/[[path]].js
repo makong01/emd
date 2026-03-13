@@ -1,11 +1,7 @@
 import redirects from "../../data/redirects.json";
 
 export function onRequest(context) {
-
   const method = context.request.method;
-  const url = new URL(context.request.url);
-  const slug = url.pathname.replace(/^\/go\//, "").replace(/\/+$/, "");
-  const target = redirects[slug];
 
   if (method !== "GET" && method !== "HEAD") {
     return new Response("Method Not Allowed", {
@@ -14,9 +10,14 @@ export function onRequest(context) {
     });
   }
 
+  const url = new URL(context.request.url);
+  const slug = url.pathname.replace(/^\/go\//, "").replace(/\/+$/, "");
+
   if (!slug) {
     return new Response("Missing redirect key", { status: 400 });
   }
+
+  const target = redirects[slug];
 
   if (!target) {
     return new Response(`Redirect target not found for slug: ${slug}`, {
